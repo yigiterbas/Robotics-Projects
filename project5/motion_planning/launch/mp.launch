@@ -1,0 +1,43 @@
+<launch>
+
+  <include file="$(find robot_sim_prj5)/launch/kuka_lwr.launch"/>
+
+  <include file="$(find lwr_robot_moveit_config)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="true"/>
+  </include>
+
+  <include file="$(find lwr_robot_moveit_config)/launch/move_group.launch">
+    <arg name="allow_trajectory_execution" value="true"/>
+  </include>
+
+
+  <node
+    pkg="motion_planning"
+    type="marker_control.py"
+    name="marker_control"
+    output="screen" />
+
+  <!--
+    This static transform solves the "TF Exception" message when running the grader
+  -->
+  <node
+  	pkg="tf"
+  	type="static_transform_publisher"
+  	name="world_link_node"
+  	args="0 0 0.2 0 0 0 world_link calib_lwr_arm_base_link 100"
+  />
+
+  <node
+    pkg="rviz"
+    type="rviz"
+    name="rviz"
+    args="-d $(find motion_planning)/config/mp.rviz" />
+
+  <!-- <node
+  	pkg="motion_planning"
+  	type="motion_planning.py"
+  	name="move_arm"
+  	output="screen"
+    required="true" /> -->
+
+</launch>
